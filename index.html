@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala do Café - Histórias Corporativas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        .gossip-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gossip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="container mx-auto px-4 py-12">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-100">
+                    <div class="mb-6 flex justify-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-coffee text-purple-600 text-3xl"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-4xl font-bold text-gray-800 mb-4">
+                        Sala do Café
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        O lugar secreto onde as histórias corporativas ganham vida
+                    </p>
+                    <div class="flex justify-center space-x-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600">+1000</div>
+                            <div class="text-sm text-gray-500">Fofocas</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600">+50</div>
+                            <div class="text-sm text-gray-500">Empresas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Form to post gossip -->
+        <div class="max-w-2xl mx-auto mt-8">
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                    <i class="fas fa-comment-dots text-purple-600 mr-3"></i>
+                    Compartilhe sua Fofoca
+                </h2>
+                <form id="gossipForm" class="space-y-5">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="company" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-building mr-2 text-purple-500"></i>Empresa
+                            </label>
+                            <input type="text" id="company" name="company" required
+                                placeholder="Nome da empresa"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300">
+                        </div>
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-tags mr-2 text-purple-500"></i>Categoria
+                            </label>
+                            <select id="category" name="category" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300">
+                                <option value="">Selecione a Categoria</option>
+                                <option value="geral">Geral</option>
+                                <option value="ambiente">Ambiente de Trabalho</option>
+                                <option value="gestao">Gestão</option>
+                                <option value="beneficios">Benefícios</option>
+                                <option value="salarios">Salários</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-comment-dots mr-2 text-purple-500"></i>Sua História
+                        </label>
+                        <textarea id="content" name="content" rows="4" required
+                            placeholder="Conte sua fofoca de forma anônima..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 resize-none"></textarea>
+                        <div id="charCount" class="text-right text-sm text-gray-500 mt-1">
+                            0 / 500 caracteres
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" 
+                            class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 transform hover:scale-105 flex items-center justify-center mx-auto">
+                            <i class="fas fa-paper-plane mr-2"></i>Compartilhar Fofoca
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Gossips Container -->
+        <div class="max-w-3xl mx-auto mt-12 space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                    <i class="fas fa-coffee text-purple-600 mr-3"></i>
+                    Fofocas Recentes
+                </h2>
+                <div id="gossipsContainer" class="space-y-4">
+                    <!-- Gossips will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button id="loadMore" 
+                class="bg-white text-purple-600 border-2 border-purple-300 px-6 py-2 rounded-full hover:bg-purple-50 transition duration-300 flex items-center mx-auto">
+                <i class="fas fa-sync mr-2"></i>Carregar Mais Fofocas
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('gossipForm');
+            const contentTextarea = document.getElementById('content');
+            const charCount = document.getElementById('charCount');
+            const maxChars = 500;
+
+            // Contador de caracteres
+            contentTextarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                charCount.textContent = `${currentLength} / ${maxChars} caracteres`;
+                
+                // Limitar caracteres
+                if (currentLength > maxChars) {
+                    this.value = this.value.substring(0, maxChars);
+                    charCount.textContent = `${maxChars} / ${maxChars} caracteres`;
+                }
+
+                // Mudar cor do contador baseado no comprimento
+                if (currentLength > maxChars * 0.8) {
+                    charCount.classList.remove('text-gray-500');
+                    charCount.classList.add('text-red-500');
+                } else {
+                    charCount.classList.remove('text-red-500');
+                    charCount.classList.add('text-gray-500');
+                }
+            });
+
+            // Validação do formulário
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validações básicas
+                const company = document.getElementById('company').value.trim();
+                const category = document.getElementById('category').value;
+                const content = contentTextarea.value.trim();
+
+                // Verificações de validação
+                if (company.length < 2) {
+                    alert('Por favor, insira um nome de empresa válido.');
+                    return;
+                }
+
+                if (category === '') {
+                    alert('Por favor, selecione uma categoria.');
+                    return;
+                }
+
+                if (content.length < 10) {
+                    alert('Sua fofoca precisa ter pelo menos 10 caracteres.');
+                    return;
+                }
+
+                // Simulação de envio (substituir por chamada real de API)
+                alert('Fofoca compartilhada com sucesso! 🤫');
+                form.reset();
+                charCount.textContent = '0 / 500 caracteres';
+            });
+        });
+    </script>
+
+    <script>
+        // Função para inicializar a página
+        function initializePage() {
+            console.log('Inicializando página...');
+
+            // Verificar existência de elementos críticos
+            const requiredElements = [
+                'commentsModal', 
+                'gossipCompanyTitle', 
+                'commentsContainer', 
+                'commentForm', 
+                'currentGossipId', 
+                'commentContent',
+                'gossipsContainer',
+                'loadMore',
+                'gossipForm'
+            ];
+
+            let missingElements = requiredElements.filter(elementId => {
+                const element = document.getElementById(elementId);
+                if (!element) {
+                    console.error(`Elemento não encontrado: ${elementId}`);
+                    return true;
+                }
+                return false;
+            });
+
+            // Se todos os elementos existirem, inicializar eventos
+            if (missingElements.length === 0) {
+                console.log('Todos os elementos encontrados. Inicializando eventos...');
+                
+                // Variável global para controle de página
+                window.currentPage = 1;
+
+                // Inicializar filtros
+                window.currentFilters = {
+                    company: '',
+                    category: '',
+                    sort: ''
+                };
+
+                // Função para adicionar event listeners com verificação
+                function safeAddEventListener(selector, event, handler) {
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        element.addEventListener(event, handler);
+                        console.log(`Event listener adicionado para: ${selector}`);
+                    } else {
+                        console.warn(`Elemento não encontrado: ${selector}`);
+                    }
+                }
+
+                // Adicionar event listeners
+                safeAddEventListener('#commentForm', 'submit', async function(event) {
+                    event.preventDefault();
+                    const gossipId = document.getElementById('currentGossipId');
+                    const commentContent = document.getElementById('commentContent');
+
+                    if (!gossipId || !commentContent) {
+                        console.error('Elementos do formulário de comentário não encontrados');
+                        return;
+                    }
+
+                    const content = commentContent.value.trim();
+                    if (!content) return;
+
+                    try {
+                        const response = await fetch(`/api/gossips/${gossipId.value}/comments`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ content })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            commentContent.value = '';
+                            loadComments(gossipId.value);
+                            loadGossips(1, true);
+                        } else {
+                            alert(result.error || 'Erro ao enviar comentário');
+                        }
+                    } catch (error) {
+                        console.error('Erro:', error);
+                        alert('Erro ao enviar comentário');
+                    }
+                });
+
+                safeAddEventListener('#gossipForm', 'submit', postGossip);
+                safeAddEventListener('#loadMore', 'click', () => loadGossips(window.currentPage + 1));
+
+                // Carregar fofocas iniciais
+                loadGossips(1);
+
+                console.log('Inicialização concluída com sucesso.');
+            } else {
+                console.error('Não foi possível inicializar todos os elementos da página');
+                alert('Erro ao carregar a página. Por favor, recarregue.');
+            }
+        }
+
+        // Garantir que o DOM esteja totalmente carregado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
+
+        async function postGossip(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = {
+                company: form.company.value,
+                category: form.category.value,
+                content: form.content.value
+            };
+
+            try {
+                const response = await fetch('/api/gossips', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Fofoca compartilhada com sucesso!');
+                    form.reset();
+                    loadGossips(1, true);
+                } else {
+                    alert(result.error || 'Erro ao compartilhar fofoca');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao enviar fofoca');
+            }
+        }
+
+        function createGossipCard(gossip) {
+            const card = document.createElement('div');
+            card.classList.add(
+                'gossip-card', 
+                'bg-white', 
+                'rounded-3xl', 
+                'shadow-lg', 
+                'p-6', 
+                'border-2', 
+                'border-transparent', 
+                'hover:border-purple-200', 
+                'hover:shadow-xl', 
+                'transition', 
+                'duration-300', 
+                'transform', 
+                'hover:-translate-y-2'
+            );
+            
+            // Adiciona classe de bloqueio se a fofoca estiver bloqueada
+            if (gossip.is_blocked) {
+                card.classList.add('opacity-60', 'cursor-not-allowed', 'bg-gray-100');
+            }
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="category-tag text-xs text-white font-bold bg-gradient-to-r from-purple-500 to-indigo-600 px-3 py-1 rounded-full">
+                        ${gossip.category.toUpperCase()}
+                    </span>
+                    <span class="text-xs text-gray-500 font-medium">
+                        <i class="fas fa-clock mr-1"></i>${formatRelativeTime(gossip.created_at)}
+                    </span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-building text-purple-500 mr-3 text-xl"></i>
+                        <h3 class="text-lg font-bold text-gray-800 truncate">
+                            ${gossip.company}
+                        </h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed ${gossip.is_blocked ? 'italic' : ''}">
+                        ${gossip.is_blocked ? 
+                            '<span class="text-red-500"><i class="fas fa-ban mr-2"></i>Conteúdo bloqueado por múltiplas denúncias</span>' : 
+                            gossip.content
+                        }
+                    </p>
+                </div>
+                <div class="flex justify-between items-center border-t border-gray-100 pt-4 min-h-[40px]">
+                    <div class="flex items-center space-x-3 h-full">
+                        ${gossip.reports ? 
+                            `<span class="text-xs text-red-500 bg-red-50 px-2 py-1 rounded-full flex items-center">
+                                <i class="fas fa-flag mr-1"></i>${gossip.reports} denúncia(s)
+                            </span>` : 
+                            '<div class="w-0"></div>' // Espaço reservado para manter o layout
+                        }
+                        <button onclick="reportGossip(${gossip.id})" 
+                            ${gossip.is_blocked ? 'disabled' : ''}
+                            class="text-red-500 hover:text-red-700 transition duration-300 text-sm
+                                ${gossip.is_blocked ? 'cursor-not-allowed opacity-50' : ''}">
+                            <i class="fas fa-flag mr-2"></i>Denunciar
+                        </button>
+                    </div>
+                    <button onclick="openCommentsModal(${gossip.id}, '${gossip.company}')" 
+                        class="text-purple-500 hover:text-purple-700 transition duration-300 text-sm flex items-center">
+                        <i class="fas fa-comment-dots mr-2"></i>Comentários (${gossip.comments_count})
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function loadGossips(page, reset = false) {
+            try {
+                console.log(`Carregando fofocas - Página: ${page}, Reset: ${reset}`);
+                const queryParams = new URLSearchParams({
+                    page: page,
+                    company: currentFilters.company,
+                    category: currentFilters.category,
+                    sort: currentFilters.sort
+                });
+
+                const response = await fetch(`/gossips?${queryParams.toString()}`);
+                const data = await response.json();
+                console.log('Dados recebidos:', data);
+
+                const container = document.getElementById('gossipsContainer');
+
+                if (reset) {
+                    container.innerHTML = '';
+                }
+
+                if (!data.gossips || data.gossips.length === 0) {
+                    console.warn('Nenhuma fofoca encontrada');
+                    container.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-comment-slash text-4xl mb-4"></i>
+                            <p>Nenhuma fofoca encontrada</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                data.gossips.forEach(gossip => {
+                    console.log('Criando card para fofoca:', gossip);
+                    container.appendChild(createGossipCard(gossip));
+                });
+
+                window.currentPage = page;
+                const loadMoreBtn = document.getElementById('loadMore');
+                if (data.has_more) {
+                    loadMoreBtn.style.display = 'flex';
+                    loadMoreBtn.onclick = () => loadGossips(page + 1);
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar fofocas:', error);
+                const container = document.getElementById('gossipsContainer');
+                container.innerHTML = `
+                    <div class="text-center text-red-500 py-8">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p>Erro ao carregar fofocas. Por favor, tente novamente.</p>
+                        <p class="text-sm text-gray-500 mt-2">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function reportGossip(id) {
+            try {
+                const response = await fetch(`/api/gossips/${id}/report`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    if (result.is_blocked) {
+                        alert(`⚠️ Fofoca bloqueada!\n\nMotivo: ${result.moderation_reason}\nNúmero de denúncias: ${result.reports}`);
+                    } else {
+                        alert(`Fofoca denunciada com sucesso!\nNúmero de denúncias: ${result.reports}`);
+                    }
+                    
+                    // Recarregar a lista de fofocas para refletir as mudanças
+                    loadGossips(1, true);
+                } else {
+                    alert(result.error || 'Erro ao denunciar fofoca');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao denunciar fofoca');
+            }
+        }
+
+        // Funções para gerenciar modal de comentários
+        function openCommentsModal(gossipId, company) {
+            document.getElementById('currentGossipId').value = gossipId;
+            document.getElementById('gossipCompanyTitle').textContent = company;
+            document.getElementById('commentsModal').classList.remove('hidden');
+            loadComments(gossipId);
+        }
+
+        function closeCommentsModal() {
+            document.getElementById('commentsModal').classList.add('hidden');
+            document.getElementById('commentsContainer').innerHTML = '';
+        }
+
+        async function loadComments(gossipId) {
+            const commentsContainer = document.getElementById('commentsContainer');
+            const noCommentsMessage = document.getElementById('noCommentsMessage');
+            
+            // Limpar container anterior
+            commentsContainer.innerHTML = '';
+            
+            // Mostrar spinner de carregamento
+            commentsContainer.innerHTML = `
+                <div class="flex justify-center items-center h-full">
+                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-purple-500"></div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`/api/gossips/${gossipId}/comments`);
+                
+                // Verificar se a resposta é bem-sucedida
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                
+                const comments = await response.json();
+                
+                // Limpar container novamente
+                commentsContainer.innerHTML = '';
+                
+                if (comments.length === 0) {
+                    // Criar mensagem de sem comentários se não existir
+                    if (!noCommentsMessage) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.id = 'noCommentsMessage';
+                        messageDiv.className = 'text-center text-gray-500 italic';
+                        messageDiv.textContent = 'Nenhum comentário ainda. Seja o primeiro a comentar!';
+                        commentsContainer.appendChild(messageDiv);
+                    } else {
+                        noCommentsMessage.style.display = 'block';
+                    }
+                } else {
+                    if (noCommentsMessage) {
+                        noCommentsMessage.style.display = 'none';
+                    }
+                    
+                    comments.forEach(comment => {
+                        const commentElement = document.createElement('div');
+                        commentElement.classList.add(
+                            'bg-white', 
+                            'p-4', 
+                            'rounded-xl', 
+                            'shadow-sm', 
+                            'border', 
+                            'border-gray-100',
+                            'hover:shadow-md',
+                            'transition',
+                            'duration-300'
+                        );
+                        
+                        commentElement.innerHTML = `
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm text-gray-500">
+                                    <i class="fas fa-user-secret mr-2 text-purple-400"></i>
+                                    Anônimo
+                                </span>
+                                <span class="text-xs text-gray-400">
+                                    ${formatRelativeTime(comment.created_at)}
+                                </span>
+                            </div>
+                            <p class="text-gray-800 leading-relaxed">
+                                ${comment.content}
+                            </p>
+                        `;
+                        
+                        commentsContainer.appendChild(commentElement);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar comentários:', error);
+                commentsContainer.innerHTML = `
+                    <div class="text-center text-red-500">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Erro ao carregar comentários. ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Função para formatar tempo relativo
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Agora';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min atrás`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} h atrás`;
+            if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} dias atrás`;
+            
+            return date.toLocaleDateString();
+        }
+    </script>
+
+    <!-- Modal de comentários -->
+    <div id="commentsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gradient-to-r from-purple-100 to-indigo-100">
+                <h2 id="gossipCompanyTitle" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600"></h2>
+                <button onclick="closeCommentsModal()" class="text-gray-500 hover:text-gray-800 transition duration-300">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="commentsContainer" class="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50">
+                <!-- Comentários serão carregados aqui -->
+            </div>
+            
+            <form id="commentForm" class="p-6 border-t border-gray-200 bg-white">
+                <input type="hidden" id="currentGossipId">
+                <div class="flex space-x-4 items-center">
+                    <textarea id="commentContent" rows="2" 
+                        class="flex-grow rounded-xl border-2 border-purple-200 p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-300 transition duration-300 resize-none"
+                        placeholder="Adicione um comentário anônimo..."></textarea>
+                    <button type="submit" 
+                        class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition duration-300 transform hover:scale-105">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="category_filter.js"></script>
+</body>
+</html>

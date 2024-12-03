@@ -1,0 +1,12 @@
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Diretórios de ambiente
+node_modules/
+dist/
+build/
+
+# Arquivos de ambiente
+.env
+.env.local

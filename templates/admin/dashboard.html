@@ -1,0 +1,30 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Estatísticas de Fofocas</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Total de Fofocas: {{ stats.gossips.total }}</p>
+                    <p>Fofocas Bloqueadas: {{ stats.gossips.blocked }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Estatísticas de Comentários</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Total de Comentários: {{ stats.comments.total }}</p>
+                    <p>Comentários Bloqueados: {{ stats.comments.blocked }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
