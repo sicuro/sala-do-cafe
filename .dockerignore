@@ -1,0 +1,9 @@
+# Ignorar arquivos desnecessários
+.git
+.gitignore
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.env
+*.md
